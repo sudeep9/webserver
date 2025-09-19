@@ -51,10 +51,10 @@ func (s *Server) addHandlers(path string, handlers Handlers) {
 }
 
 func (s *Server) Start() error {
-	if s.opts.certs != nil {
+	if s.opts.Certs != nil {
 		s.log.Info("Server is starting with TLS...",
-			"addr", s.opts.Addr, "cert", s.opts.certs.Cert, "key", s.opts.certs.Key)
-		return http.ListenAndServeTLS(s.opts.Addr, s.opts.certs.Cert, s.opts.certs.Key, s.mux)
+			"addr", s.opts.Addr, "cert", s.opts.Certs.Cert, "key", s.opts.Certs.Key)
+		return http.ListenAndServeTLS(s.opts.Addr, s.opts.Certs.Cert, s.opts.Certs.Key, s.mux)
 	}
 	s.log.Info("Server is starting...", "addr", s.opts.Addr)
 	return http.ListenAndServe(s.opts.Addr, s.mux)

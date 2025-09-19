@@ -9,7 +9,7 @@ type ServerOptions struct {
 	Addr       string
 	Handlers   map[string]Handlers
 	StaticDirs map[string]string
-	certs      *Certificates
+	Certs      *Certificates
 }
 
 func (o *ServerOptions) populateDefaults() {
