@@ -8,10 +8,16 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+type Certificates struct {
+	Cert string
+	Key  string
+}
+
 type Server struct {
-	opts ServerOptions
-	log  *slog.Logger
-	mux  *chi.Mux
+	opts  ServerOptions
+	log   *slog.Logger
+	mux   *chi.Mux
+	certs *Certificates
 }
 
 func NewServer(logger *slog.Logger, opts ServerOptions) (srv *Server) {
@@ -51,6 +57,11 @@ func (s *Server) addHandlers(path string, handlers Handlers) {
 }
 
 func (s *Server) Start() error {
+	if s.certs != nil {
+		s.log.Info("Server is starting with TLS...",
+			"addr", s.opts.Addr, "cert", s.certs.Cert, "key", s.certs.Key)
+		return http.ListenAndServeTLS(s.opts.Addr, s.certs.Cert, s.certs.Key, s.mux)
+	}
 	s.log.Info("Server is starting...", "addr", s.opts.Addr)
 	return http.ListenAndServe(s.opts.Addr, s.mux)
 }
