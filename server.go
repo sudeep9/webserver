@@ -3,7 +3,9 @@ package webserver
 import (
 	"log/slog"
 	"net/http"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -38,6 +40,22 @@ func (s *Server) addStaticDir(path, realpath string) {
 	s.log.Info("Adding static directory", "path", path)
 	s.mux.Handle(path+"/*", http.StripPrefix(path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		realpath := filepath.Join(realpath, r.URL.Path)
+
+		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+			compressedPath := realpath + ".gz"
+			_, err := os.Lstat(compressedPath)
+			if err == nil {
+				realpath = compressedPath
+				w.Header().Set("Content-Encoding", "gzip")
+			}
+		}
+
+		if strings.HasSuffix(r.URL.Path, ".js") {
+			w.Header().Set("Content-Type", "application/javascript")
+		} else if strings.HasSuffix(r.URL.Path, ".css") {
+			w.Header().Set("Content-Type", "text/css")
+		}
+
 		s.log.Info("Serving static file", "path", r.URL.Path, "realpath", realpath)
 		http.ServeFile(w, r, realpath)
 	})))
