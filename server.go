@@ -64,7 +64,7 @@ func (s *Server) addStaticDir(path, realpath string) {
 func (s *Server) addHandlers(path string, handlers Handlers) {
 	s.log.Info("Registering routes", "path", path)
 	r := chi.NewRouter()
-	handlers.Register(r)
+	handlers.Register(path, r)
 	s.mux.Mount(path, r)
 }
 

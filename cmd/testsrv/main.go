@@ -11,8 +11,16 @@ import (
 
 type HandlerImpl struct{}
 
-func (h *HandlerImpl) Register(r *chi.Mux) {
+func (h *HandlerImpl) Register(path string, r *chi.Mux) {
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("At Root"))
+	})
 	r.Get("/hello", h.handleHome)
+	r.Route("/abc", func(r chi.Router) {
+		r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("Hello World"))
+		})
+	})
 }
 
 func (h *HandlerImpl) handleHome(w http.ResponseWriter, r *http.Request) {
