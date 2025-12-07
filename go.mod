@@ -1,4 +1,4 @@
-module github.com/sudeep9/webserver
+module github.com/sudeep9/webserver/v2
 
 go 1.24.5
 
